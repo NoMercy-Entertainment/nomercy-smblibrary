@@ -1,0 +1,3 @@
+# Build intermediates — the shippable DLLs live in output/managed/ and ARE tracked.
+src/**/bin/
+src/**/obj/
