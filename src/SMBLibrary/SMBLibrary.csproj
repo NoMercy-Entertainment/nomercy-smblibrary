@@ -10,10 +10,12 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Authors>Tal Aloni; NoMercy Entertainment</Authors>
     <Copyright>Copyright © Tal Aloni 2014-2026</Copyright>
-    <PackageDescription>NoMercy fork of SMBLibrary (SMB 1.0/2.0/2.1/3.0 client). Adds a public Connect overload that accepts an explicit port, so the client can reach an SMB server on a non-445 port.</PackageDescription>
+    <PackageDescription>NoMercy fork of SMBLibrary: pure C# SMB 1.0/CIFS, 2.0/2.1 and 3.0, client and server. Adds a public Connect overload with an explicit port, so the client can reach an SMB server on any port, not only 445.</PackageDescription>
     <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>smb;cifs;smb2;smb3;samba;file-share;network-share</PackageTags>
     <RepositoryUrl>https://github.com/NoMercy-Entertainment/nomercy-smblibrary</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/TalAloni/SMBLibrary</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/NoMercy-Entertainment/nomercy-smblibrary</PackageProjectUrl>
     <!-- Utilities is private to this package: ship its DLL inside it rather than as a -->
     <!-- second package, so one package ID is the whole client.                       -->
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeUtilitiesInPackage</TargetsForTfmSpecificBuildOutput>
@@ -23,6 +25,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Utilities\Utilities.csproj" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
