@@ -61,6 +61,6 @@ You can use this package in closed-source software, because it links as a separa
 
 ## For maintainers
 
-- Build: `pwsh scripts/build.ps1` (Release, `netstandard2.0`).
+- Build: `dotnet build src/SMBLibrary/SMBLibrary.csproj -c Release`.
 - Pack locally: `dotnet pack src/SMBLibrary/SMBLibrary.csproj -c Release -o out`.
 - Release: raise `<Version>` in `src/SMBLibrary/SMBLibrary.csproj`, commit, then push the tag `v<Version>`, for example `v1.5.7-nomercy.2`. The `publish` workflow packs, checks that both assemblies are in the package and that the tag matches the version, then pushes to nuget.org with Trusted Publishing. No API key is stored anywhere; the repo variable `NUGET_USER` holds the nuget.org profile name.
