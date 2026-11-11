@@ -10,7 +10,7 @@ namespace SMBLibrary.Authentication.NTLM
         DnsDomainName = 0x0004, // Unicode
         DnsTreeName = 0x0005, // Unicode
         Flags = 0x0006, // UInt32
-        Timestamp = 0x0006, // Filetime
+        Timestamp = 0x0007, // Filetime
         SingleHost = 0x0008, // platform-specific BLOB
         TargetName = 0x0009, // Unicode
         ChannelBindings = 0x000A, // MD5 Hash
