@@ -53,7 +53,7 @@ namespace SMBLibrary.SMB1
             uint dataOffset = LittleEndianReader.ReadUInt32(this.SMBParameters, ref readOffset);
             DataDisplacement = LittleEndianReader.ReadUInt32(this.SMBParameters, ref readOffset);
             byte setupCount = ByteReader.ReadByte(this.SMBParameters, ref readOffset);
-            Setup = ByteReader.ReadBytes(this.SMBParameters, ref offset, setupCount * 2);
+            Setup = ByteReader.ReadBytes(this.SMBParameters, ref readOffset, setupCount * 2);
 
             TransParameters = ByteReader.ReadBytes(buffer, (int)parameterOffset, (int)parameterCount);
             TransData = ByteReader.ReadBytes(buffer, (int)dataOffset, (int)dataCount);
