@@ -15,7 +15,7 @@ namespace SMBLibrary.NetBios
     {
         BNode = 0x00,
         PNode = 0x01,
-        MNode = 0x10,
+        MNode = 0x02,
     }
 
     public struct NameFlags // ushort
