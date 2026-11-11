@@ -187,6 +187,7 @@ namespace SMBLibrary.Client
                     m_connectionState.ReceiveBuffer.Dispose();
                 }
                 m_isConnected = false;
+                m_isLoggedIn = false;
                 m_userID = 0;
             }
         }
