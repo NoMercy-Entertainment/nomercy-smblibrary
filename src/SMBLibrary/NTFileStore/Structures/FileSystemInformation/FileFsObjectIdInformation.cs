@@ -27,7 +27,7 @@ namespace SMBLibrary
 
         public FileFsObjectIdInformation(byte[] buffer, int offset)
         {
-            LittleEndianConverter.ToGuid(buffer, offset + 0);
+            ObjectID = LittleEndianConverter.ToGuid(buffer, offset + 0);
             ExtendedInfo = ByteReader.ReadBytes(buffer, offset + 16, 48);
         }
 
