@@ -65,7 +65,7 @@ namespace SMBLibrary.SMB1
     /// </summary>
     public class LockingAndXRequest : SMBAndXCommand
     {
-        public const int ParametersLength = 12;
+        public const int ParametersLength = 16;
         // Parameters:
         public ushort FID;
         public LockType TypeOfLock;
