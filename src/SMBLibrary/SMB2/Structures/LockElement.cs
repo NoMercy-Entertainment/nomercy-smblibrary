@@ -31,8 +31,8 @@ namespace SMBLibrary.SMB2
         {
             LittleEndianWriter.WriteUInt64(buffer, offset + 0, Offset);
             LittleEndianWriter.WriteUInt64(buffer, offset + 8, Length);
-            LittleEndianWriter.WriteUInt64(buffer, offset + 16, (uint)Flags);
-            LittleEndianWriter.WriteUInt64(buffer, offset + 20, Reserved);
+            LittleEndianWriter.WriteUInt32(buffer, offset + 16, (uint)Flags);
+            LittleEndianWriter.WriteUInt32(buffer, offset + 20, Reserved);
         }
 
         public bool SharedLock
