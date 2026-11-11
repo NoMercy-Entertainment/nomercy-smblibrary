@@ -52,8 +52,8 @@ namespace SMBLibrary.NetBios
             NumberOfAlignmentErrors = BigEndianReader.ReadUInt16(buffer, ref offset);
             NumberOfCollisions = BigEndianReader.ReadUInt16(buffer, ref offset);
             NumberOfSendAborts = BigEndianReader.ReadUInt16(buffer, ref offset);
-            NumberOfGoodSends = BigEndianReader.ReadUInt16(buffer, ref offset);
-            NumberOfGoodReceives = BigEndianReader.ReadUInt16(buffer, ref offset);
+            NumberOfGoodSends = BigEndianReader.ReadUInt32(buffer, ref offset);
+            NumberOfGoodReceives = BigEndianReader.ReadUInt32(buffer, ref offset);
             NumberOfRetransmits = BigEndianReader.ReadUInt16(buffer, ref offset);
             NumberOfNoResourceConditions = BigEndianReader.ReadUInt16(buffer, ref offset);
             NumberOfFreeCommandBlocks = BigEndianReader.ReadUInt16(buffer, ref offset);
