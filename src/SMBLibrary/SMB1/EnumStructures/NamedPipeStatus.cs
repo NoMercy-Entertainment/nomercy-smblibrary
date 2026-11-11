@@ -60,7 +60,7 @@ namespace SMBLibrary.SMB1
             ReadMode = (ReadMode)((value & 0x0300) >> 8);
             NamedPipeType = (NamedPipeType)((value & 0x0C00) >> 10);
             Endpoint = (Endpoint)((value & 0x4000) >> 14);
-            NonBlocking = (NonBlocking)((value & 0x80) >> 15);
+            NonBlocking = (NonBlocking)((value & 0x8000) >> 15);
         }
 
         public void WriteBytes(byte[] buffer, int offset)
