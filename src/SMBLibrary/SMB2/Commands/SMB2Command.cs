@@ -480,6 +480,21 @@ namespace SMBLibrary.SMB2
                             throw new InvalidDataException();
                         }
                     }
+                case SMB2CommandName.OplockBreak:
+                    {
+                        if (structureSize == OplockBreakNotification.DeclaredSize)
+                        {
+                            return new OplockBreakNotification(buffer, offset);
+                        }
+                        else if (structureSize == ErrorResponse.DeclaredSize)
+                        {
+                            return new ErrorResponse(buffer, offset);
+                        }
+                        else
+                        {
+                            throw new InvalidDataException();
+                        }
+                    }
                 default:
                     throw new InvalidDataException("Invalid SMB2 command 0x" + ((ushort)commandName).ToString("X4"));
             }

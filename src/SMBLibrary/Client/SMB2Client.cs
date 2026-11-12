@@ -562,6 +562,13 @@ namespace SMBLibrary.Client
                     return;
                 }
 
+                if (command is OplockBreakNotification)
+                {
+                    // The client never requests an oplock, so there is nothing to acknowledge
+                    Log("Ignored an unsolicited oplock break notification");
+                    return;
+                }
+
                 if (m_preauthIntegrityHashValue != null && (command is NegotiateResponse || (command is SessionSetupResponse sessionSetupResponse && sessionSetupResponse.Header.Status == NTStatus.STATUS_MORE_PROCESSING_REQUIRED)))
                 {
                     m_preauthIntegrityHashValue = SMB2Cryptography.ComputeHash(HashAlgorithm.SHA512, ByteUtils.Concatenate(m_preauthIntegrityHashValue, messageBytes));
