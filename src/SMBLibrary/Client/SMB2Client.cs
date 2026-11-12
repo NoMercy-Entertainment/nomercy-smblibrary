@@ -170,6 +170,7 @@ namespace SMBLibrary.Client
 
         private bool ConnectSocket(IPAddress serverAddress, int port)
         {
+            ResetConnectionState();
             m_clientSocket = new Socket(serverAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
             try
@@ -198,12 +199,27 @@ namespace SMBLibrary.Client
                     m_connectionState.ReceiveBuffer.Dispose();
                 }
                 m_isConnected = false;
-                m_isLoggedIn = false;
-                m_encryptSessionData = false;
-                m_messageID = 0;
-                m_sessionID = 0;
-                m_availableCredits = 1;
-                m_connectionSupportsMultiCredit = false;
+                ResetConnectionState();
+            }
+        }
+
+        private void ResetConnectionState()
+        {
+            m_isLoggedIn = false;
+            m_encryptSessionData = false;
+            m_signingRequired = false;
+            m_signingKey = null;
+            m_encryptionKey = null;
+            m_decryptionKey = null;
+            m_sessionKey = null;
+            m_preauthIntegrityHashValue = null;
+            m_messageID = 0;
+            m_sessionID = 0;
+            m_availableCredits = 1;
+            m_connectionSupportsMultiCredit = false;
+            lock (m_incomingQueueLock)
+            {
+                m_incomingQueue.Clear();
             }
         }
 
