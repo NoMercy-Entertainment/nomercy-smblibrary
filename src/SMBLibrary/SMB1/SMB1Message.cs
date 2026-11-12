@@ -30,6 +30,7 @@ namespace SMBLibrary.SMB1
             Header = new SMB1Header(buffer);
             SMB1Command command = SMB1Command.ReadCommand(buffer, SMB1Header.Length, Header.Command, Header);
             Commands.Add(command);
+            int currentOffset = SMB1Header.Length;
             while(command is SMBAndXCommand)
             {
                 SMBAndXCommand andXCommand = (SMBAndXCommand)command;
@@ -37,6 +38,11 @@ namespace SMBLibrary.SMB1
                 {
                     break;
                 }
+                if (andXCommand.AndXOffset <= currentOffset)
+                {
+                    throw new InvalidDataException("AndXOffset must move forward");
+                }
+                currentOffset = andXCommand.AndXOffset;
                 command = SMB1Command.ReadCommand(buffer, andXCommand.AndXOffset, andXCommand.AndXCommand, Header);
                 Commands.Add(command);
             }
