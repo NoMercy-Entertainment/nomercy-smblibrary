@@ -82,7 +82,9 @@ internal static class Smb1Internals
     internal static object CreateState()
     {
         object baseState = Activator.CreateInstance(Library.GetType("SMBLibrary.Server.ConnectionState"), new object[] { null, null, null });
-        return Activator.CreateInstance(Library.GetType("SMBLibrary.Server.SMB1ConnectionState"), new object[] { baseState });
+        object state = Activator.CreateInstance(Library.GetType("SMBLibrary.Server.SMB1ConnectionState"), new object[] { baseState });
+        state.GetType().GetField("MaxBufferSize").SetValue(state, 4356);
+        return state;
     }
 
     internal static object CreateSession(object state)
