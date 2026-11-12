@@ -47,6 +47,7 @@ namespace SMBLibrary.Server.SMB1
                 // [MS-CIFS] The name field MUST be set to the name of the pipe being waited for, in the format \PIPE\<pipename>
                 state.LogToServer(Severity.Verbose, "TransactWaitNamedPipe failed. Invalid pipe name: {0}.", name);
                 header.Status = NTStatus.STATUS_INVALID_SMB;
+                return;
             }
 
             string pipeName = name.Substring(6);
