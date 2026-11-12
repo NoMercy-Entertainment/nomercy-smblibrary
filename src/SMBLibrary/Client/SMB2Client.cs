@@ -199,6 +199,7 @@ namespace SMBLibrary.Client
                 }
                 m_isConnected = false;
                 m_isLoggedIn = false;
+                m_encryptSessionData = false;
                 m_messageID = 0;
                 m_sessionID = 0;
                 m_availableCredits = 1;
@@ -511,6 +512,12 @@ namespace SMBLibrary.Client
                 }
                 else
                 {
+                    if (m_encryptSessionData)
+                    {
+                        // [MS-SMB2] 3.2.5.1.1 If the session requires encryption and the message is not encrypted, the client MUST discard it
+                        Log("Discarded an unencrypted SMB2 response on an encrypted session");
+                        return;
+                    }
                     messageBytes = packet.Trailer;
                 }
 
