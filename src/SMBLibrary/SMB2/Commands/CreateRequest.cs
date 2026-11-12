@@ -61,7 +61,7 @@ namespace SMBLibrary.SMB2
             Name = ByteReader.ReadUTF16String(buffer, offset + NameOffset, NameLength / 2);
             if (CreateContextsLength > 0)
             {
-                CreateContexts = CreateContext.ReadCreateContextList(buffer, (int)CreateContextsOffset);
+                CreateContexts = CreateContext.ReadCreateContextList(buffer, offset + (int)CreateContextsOffset);
             }
         }
 
