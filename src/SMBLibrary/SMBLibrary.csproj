@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>NoMercy.SMBLibrary</AssemblyName>
     <PackageId>NoMercy.SMBLibrary</PackageId>
-    <Version>1.5.7-nomercy.1</Version>
+    <Version>1.5.7-nomercy.2</Version>
     <NoWarn>1573;1591;0618</NoWarn>
     <RootNamespace>SMBLibrary</RootNamespace>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
