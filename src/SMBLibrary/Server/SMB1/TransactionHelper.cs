@@ -69,9 +69,18 @@ namespace SMBLibrary.Server.SMB1
         internal static List<SMB1Command> GetTransactionResponse(SMB1Header header, TransactionSecondaryRequest request, ISMBShare share, SMB1ConnectionState state)
         {
             ProcessStateObject processState = state.GetProcessState(header.PID);
+            CommandName commandName = request is Transaction2SecondaryRequest ? CommandName.SMB_COM_TRANSACTION2 : CommandName.SMB_COM_TRANSACTION;
             if (processState == null)
             {
-                throw new InvalidDataException();
+                header.Status = NTStatus.STATUS_INVALID_SMB;
+                return new ErrorResponse(commandName);
+            }
+            if ((uint)request.ParameterDisplacement + (uint)request.TransParameters.Length > (uint)processState.TransactionParameters.Length ||
+                (uint)request.DataDisplacement + (uint)request.TransData.Length > (uint)processState.TransactionData.Length)
+            {
+                state.RemoveProcessState(header.PID);
+                header.Status = NTStatus.STATUS_INVALID_PARAMETER;
+                return new ErrorResponse(commandName);
             }
             ByteWriter.WriteBytes(processState.TransactionParameters, request.ParameterDisplacement, request.TransParameters);
             ByteWriter.WriteBytes(processState.TransactionData, request.DataDisplacement, request.TransData);
