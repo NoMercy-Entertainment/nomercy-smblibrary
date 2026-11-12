@@ -102,7 +102,8 @@ namespace SMBLibrary.Server
                     catch
                     {
                     }
-                    if (request != null)
+                    // A name that does not decode to 16 characters is not a valid MS NetBIOS name: ignore it
+                    if (request != null && !(request.Question.Type == NameRecordType.NB && request.Question.Name.Length != 16))
                     {
                         if (request.Question.Type == NameRecordType.NB)
                         {

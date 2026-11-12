@@ -49,8 +49,12 @@ public class Batch5bTests
 
         NameQueryRequest request = new NameQueryRequest();
         request.Header.QDCount = 1;
-        request.Question.Name = "AB";
-        byte[] packet = request.GetBytes();
+        request.Question.Name = NetBiosUtils.GetMSNetBiosName("TEST", NetBiosSuffix.WorkstationService);
+        byte[] valid = request.GetBytes();
+        // Swap the 32 character encoded label for a 4 character one, which decodes to a 2 character name
+        int headerLength = NameServicePacketHeader.Length;
+        byte[] label = System.Text.Encoding.ASCII.GetBytes("CECF");
+        byte[] packet = valid.Take(headerLength).Concat(new byte[] { 4 }).Concat(label).Concat(valid.Skip(headerLength + 1 + 32)).ToArray();
         sender.Send(packet, packet.Length, (IPEndPoint)listener.Client.LocalEndPoint);
         IAsyncResult result = listener.BeginReceive(null, null);
         Assert.True(result.AsyncWaitHandle.WaitOne(2000));
