@@ -104,9 +104,11 @@ namespace SMBLibrary.Server.SMB1
                 return openStatus;
             }
 
-            fileInfo = NTFileStoreHelper.GetNetworkOpenInformation(fileStore, handle);
+            FileInformation result;
+            NTStatus queryStatus = fileStore.GetFileInformation(out result, handle, FileInformationClass.FileNetworkOpenInformation);
             fileStore.CloseFile(handle);
-            return NTStatus.STATUS_SUCCESS;
+            fileInfo = queryStatus == NTStatus.STATUS_SUCCESS ? (FileNetworkOpenInformation)result : null;
+            return queryStatus;
         }
 
         public static NTStatus SetInformation(INTFileStore fileStore, string path, SMBFileAttributes fileAttributes, DateTime? lastWriteTime, SecurityContext securityContext)
