@@ -17,6 +17,12 @@ namespace SMBLibrary.Server.SMB1
         {
             SMB1Session session = state.GetSession(header.UID);
             OpenFileObject openFile = session.GetOpenFileObject(subcommand.FID);
+            if (openFile == null)
+            {
+                state.LogToServer(Severity.Verbose, "NotifyChange failed. Invalid FID. (UID: {0}, TID: {1}, FID: {2})", header.UID, header.TID, subcommand.FID);
+                header.Status = NTStatus.STATUS_INVALID_HANDLE;
+                return;
+            }
             SMB1AsyncContext context = state.CreateAsyncContext(header.UID, header.TID, header.PID, header.MID, subcommand.FID, state);
             // We wish to make sure that the 'Monitoring started' will appear before the 'Monitoring completed' in the log
             lock (context)
