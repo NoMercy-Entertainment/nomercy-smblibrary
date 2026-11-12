@@ -6,6 +6,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Utilities;
 
 namespace SMBLibrary
@@ -60,6 +61,10 @@ namespace SMBLibrary
             {
                 entry = ReadFileInformation(buffer, offset, fileInformationClass);
                 result.Add(entry);
+                if (entry.NextEntryOffset > (uint)(buffer.Length - offset))
+                {
+                    throw new InvalidDataException("NextEntryOffset leaves the buffer");
+                }
                 offset += (int)entry.NextEntryOffset;
             }
             while (entry.NextEntryOffset != 0);
