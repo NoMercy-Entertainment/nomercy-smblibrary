@@ -33,6 +33,18 @@ namespace SMBLibrary.Client
                 return null;
             }
 
+            try
+            {
+                return EnumerateShares(namedPipeShare, pipeHandle, maxTransmitFragmentSize, serverName, shareType, out status);
+            }
+            finally
+            {
+                namedPipeShare.CloseFile(pipeHandle);
+            }
+        }
+
+        private static List<string> EnumerateShares(INTFileStore namedPipeShare, object pipeHandle, int maxTransmitFragmentSize, string serverName, ShareType? shareType, out NTStatus status)
+        {
             NetrShareEnumRequest shareEnumRequest = new NetrShareEnumRequest();
             shareEnumRequest.InfoStruct = new ShareEnum();
             shareEnumRequest.InfoStruct.Level = 1;
@@ -78,7 +90,6 @@ namespace SMBLibrary.Client
                 }
                 responseData = ByteUtils.Concatenate(responseData, responsePDU.Data);
             }
-            namedPipeShare.CloseFile(pipeHandle);
             NetrShareEnumResponse shareEnumResponse = new NetrShareEnumResponse(responseData);
             ShareInfo1Container shareInfo1 = shareEnumResponse.InfoStruct.Info as ShareInfo1Container;
             if (shareInfo1 == null || shareInfo1.Entries == null)

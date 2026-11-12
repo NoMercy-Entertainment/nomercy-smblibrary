@@ -40,11 +40,13 @@ namespace SMBLibrary.Client
             status = namedPipeShare.DeviceIOControl(pipeHandle, (uint)IoControlCode.FSCTL_PIPE_TRANSCEIVE, input, out output, 4096);
             if (status != NTStatus.STATUS_SUCCESS)
             {
+                namedPipeShare.CloseFile(pipeHandle);
                 return status;
             }
             BindAckPDU bindAckPDU = RPCPDU.GetPDU(output, 0) as BindAckPDU;
             if (bindAckPDU == null)
             {
+                namedPipeShare.CloseFile(pipeHandle);
                 return NTStatus.STATUS_NOT_SUPPORTED;
             }
 
