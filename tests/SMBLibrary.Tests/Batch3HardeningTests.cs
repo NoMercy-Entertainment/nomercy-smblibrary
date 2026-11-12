@@ -65,6 +65,14 @@ public class ClientSessionKeyTests
     {
         Assert.False(RandomSourceInspector.ConstructsSystemRandom(typeof(NTLMAuthenticationHelper)));
     }
+
+    [Theory]
+    [InlineData(typeof(SMB1Client))]
+    [InlineData(typeof(SMB2Client))]
+    public void ClientChallengeAndSalt_DoNotUseSystemRandom(Type client)
+    {
+        Assert.False(RandomSourceInspector.ConstructsSystemRandom(client));
+    }
 }
 
 public class AesCcmNonceTests

@@ -277,7 +277,10 @@ namespace SMBLibrary.Client
                 request.AccountName = userName;
                 request.PrimaryDomain = domainName;
                 byte[] clientChallenge = new byte[8];
-                new Random().NextBytes(clientChallenge);
+                using (RandomNumberGenerator generator = RandomNumberGenerator.Create())
+                {
+                    generator.GetBytes(clientChallenge);
+                }
                 byte[] proofStr = null;
                 if (authenticationMethod == AuthenticationMethod.NTLMv1)
                 {
