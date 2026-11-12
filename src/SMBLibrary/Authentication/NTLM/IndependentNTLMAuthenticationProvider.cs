@@ -401,7 +401,10 @@ namespace SMBLibrary.Authentication.NTLM
         private static byte[] GenerateServerChallenge()
         {
             byte[] serverChallenge = new byte[8];
-            new Random().NextBytes(serverChallenge);
+            using (RandomNumberGenerator generator = RandomNumberGenerator.Create())
+            {
+                generator.GetBytes(serverChallenge);
+            }
             return serverChallenge;
         }
     }
