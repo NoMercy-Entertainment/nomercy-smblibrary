@@ -58,7 +58,7 @@ namespace SMBLibrary.SMB1
             byte shortNameLength = ByteReader.ReadByte(buffer, ref offset);
             Reserved = ByteReader.ReadByte(buffer, ref offset);
             ShortName = ByteReader.ReadUTF16String(buffer, ref offset, 12);
-            ShortName = ShortName.Substring(0, shortNameLength);
+            ShortName = ShortName.Substring(0, shortNameLength / 2);
             FileName = SMB1Helper.ReadFixedLengthString(buffer, ref offset, isUnicode, (int)fileNameLength);
         }
 
