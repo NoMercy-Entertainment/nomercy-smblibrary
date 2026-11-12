@@ -199,6 +199,22 @@ public class CancelAfterTreeDisconnectTests
     }
 
     [Fact]
+    public void CancelForUnknownTree_DoesNotThrow()
+    {
+        var (state, session) = SMB2ServerHarness.CreateSession();
+        object context = SMB2ServerHarness.Call(state, "CreateAsyncContext", new FileID(), state, 1UL, 99u);
+        ulong asyncId = (ulong)context.GetType().GetField("AsyncID").GetValue(context);
+        CancelRequest request = new CancelRequest();
+        request.Header.SessionID = 1;
+        request.Header.IsAsync = true;
+        request.Header.AsyncID = asyncId;
+
+        Exception error = Record.Exception(() => SMB2ServerHarness.CallStatic("SMBLibrary.Server.SMB2.CancelHelper", "GetCancelResponse", request, state));
+
+        Assert.Null(error);
+    }
+
+    [Fact]
     public void TreeDisconnect_RemovesPendingAsyncContexts()
     {
         var (state, session) = SMB2ServerHarness.CreateSession();
