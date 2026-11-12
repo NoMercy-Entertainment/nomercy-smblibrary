@@ -32,11 +32,16 @@ namespace SMBLibrary.Server.SMB1
                 {
                     state.LogToServer(Severity.Verbose, "NotifyChange: Monitoring of '{0}{1}' started. PID: {2}. MID: {3}.", share.Name, openFile.Path, context.PID, context.MID);
                 }
-                else if (header.Status == NTStatus.STATUS_NOT_SUPPORTED)
+                else
                 {
-                    // [MS-CIFS] If the server does not support the NT_TRANSACT_NOTIFY_CHANGE subcommand, it can return an
-                    // error response with STATUS_NOT_IMPLEMENTED [..] in response to an NT_TRANSACT_NOTIFY_CHANGE Request.
-                    header.Status = NTStatus.STATUS_NOT_IMPLEMENTED;
+                    // OnNotifyChangeCompleted only runs for a pending request
+                    state.RemoveAsyncContext(context);
+                    if (header.Status == NTStatus.STATUS_NOT_SUPPORTED)
+                    {
+                        // [MS-CIFS] If the server does not support the NT_TRANSACT_NOTIFY_CHANGE subcommand, it can return an
+                        // error response with STATUS_NOT_IMPLEMENTED [..] in response to an NT_TRANSACT_NOTIFY_CHANGE Request.
+                        header.Status = NTStatus.STATUS_NOT_IMPLEMENTED;
+                    }
                 }
             }
         }
