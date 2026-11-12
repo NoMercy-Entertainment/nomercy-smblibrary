@@ -26,6 +26,7 @@ namespace SMBLibrary.Services
         public static readonly Guid BindTimeFeatureIdentifier3 = new Guid("6CB71C2C-9812-4540-0300-000000000000");
         public const int BindTimeFeatureIdentifierVersion = 1;
 
+        private const int MinimumFragmentSize = 1432;
         private static uint m_associationGroupID = 1;
 
         public static BindAckPDU GetRPCBindResponse(BindPDU bindPDU, RemoteService service)
@@ -129,6 +130,8 @@ namespace SMBLibrary.Services
             }
 
             int offset = 0;
+            // [MS-RPCE] 2.2.2.6 The minimum fragment size is 1432 bytes, a smaller value would stop the loop from advancing
+            maxTransmitFragmentSize = Math.Max(maxTransmitFragmentSize, MinimumFragmentSize);
             int maxPDUDataLength = maxTransmitFragmentSize - RPCPDU.CommonFieldsLength - ResponsePDU.ResponseFieldsLength;
             do
             {
