@@ -16,11 +16,21 @@ namespace SMBLibrary.Client
     {
         public static readonly int NetBiosNameServicePort = 137;
 
-        private IPAddress m_serverAddress;
+        private const int DefaultReceiveTimeout = 5000;
 
-        public NameServiceClient(IPAddress serverAddress)
+        private IPAddress m_serverAddress;
+        private int m_port;
+        private int m_receiveTimeout;
+
+        public NameServiceClient(IPAddress serverAddress) : this(serverAddress, NetBiosNameServicePort, DefaultReceiveTimeout)
+        {
+        }
+
+        internal NameServiceClient(IPAddress serverAddress, int port, int receiveTimeout)
         {
             m_serverAddress = serverAddress;
+            m_port = port;
+            m_receiveTimeout = receiveTimeout;
         }
 
         public string GetServerName()
@@ -29,6 +39,10 @@ namespace SMBLibrary.Client
             request.Header.QDCount = 1;
             request.Question.Name = "*".PadRight(16, '\0');
             NodeStatusResponse response = SendNodeStatusRequest(request);
+            if (response == null)
+            {
+                return null;
+            }
             foreach (KeyValuePair<string, NameFlags> entry in response.Names)
             {
                 NetBiosSuffix suffix = NetBiosUtils.GetSuffixFromMSNetBiosName(entry.Key);
@@ -43,14 +57,24 @@ namespace SMBLibrary.Client
 
         private NodeStatusResponse SendNodeStatusRequest(NodeStatusRequest request)
         {
-            UdpClient client = new UdpClient();
-            IPEndPoint serverEndPoint = new IPEndPoint(m_serverAddress, NetBiosNameServicePort);
-            client.Connect(serverEndPoint);
+            using (UdpClient client = new UdpClient())
+            {
+                client.Client.ReceiveTimeout = m_receiveTimeout;
+                IPEndPoint serverEndPoint = new IPEndPoint(m_serverAddress, m_port);
+                client.Connect(serverEndPoint);
 
-            byte[] requestBytes = request.GetBytes();
-            client.Send(requestBytes, requestBytes.Length);
-            byte[] responseBytes = client.Receive(ref serverEndPoint);
-            return new NodeStatusResponse(responseBytes, 0);
+                byte[] requestBytes = request.GetBytes();
+                client.Send(requestBytes, requestBytes.Length);
+                try
+                {
+                    byte[] responseBytes = client.Receive(ref serverEndPoint);
+                    return new NodeStatusResponse(responseBytes, 0);
+                }
+                catch (SocketException ex) when (ex.SocketErrorCode == SocketError.TimedOut)
+                {
+                    return null;
+                }
+            }
         }
     }
 }
