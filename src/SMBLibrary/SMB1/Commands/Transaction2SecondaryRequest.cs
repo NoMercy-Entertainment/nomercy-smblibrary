@@ -26,15 +26,15 @@ namespace SMBLibrary.SMB1
 
         public Transaction2SecondaryRequest(byte[] buffer, int offset) : base(buffer, offset)
         {
-            TotalParameterCount = LittleEndianConverter.ToUInt16(this.SMBData, 0);
-            TotalDataCount = LittleEndianConverter.ToUInt16(this.SMBData, 2);
-            ParameterCount = LittleEndianConverter.ToUInt16(this.SMBData, 4);
-            ParameterOffset = LittleEndianConverter.ToUInt16(this.SMBData, 6);
-            ParameterDisplacement = LittleEndianConverter.ToUInt16(this.SMBData, 8);
-            DataCount = LittleEndianConverter.ToUInt16(this.SMBData, 10);
-            DataOffset = LittleEndianConverter.ToUInt16(this.SMBData, 12);
-            DataDisplacement = LittleEndianConverter.ToUInt16(this.SMBData, 14);
-            FID = LittleEndianConverter.ToUInt16(this.SMBData, 16);
+            TotalParameterCount = LittleEndianConverter.ToUInt16(this.SMBParameters, 0);
+            TotalDataCount = LittleEndianConverter.ToUInt16(this.SMBParameters, 2);
+            ParameterCount = LittleEndianConverter.ToUInt16(this.SMBParameters, 4);
+            ParameterOffset = LittleEndianConverter.ToUInt16(this.SMBParameters, 6);
+            ParameterDisplacement = LittleEndianConverter.ToUInt16(this.SMBParameters, 8);
+            DataCount = LittleEndianConverter.ToUInt16(this.SMBParameters, 10);
+            DataOffset = LittleEndianConverter.ToUInt16(this.SMBParameters, 12);
+            DataDisplacement = LittleEndianConverter.ToUInt16(this.SMBParameters, 14);
+            FID = LittleEndianConverter.ToUInt16(this.SMBParameters, 16);
 
             TransParameters = ByteReader.ReadBytes(buffer, ParameterOffset, ParameterCount);
             TransData = ByteReader.ReadBytes(buffer, DataOffset, DataCount);
