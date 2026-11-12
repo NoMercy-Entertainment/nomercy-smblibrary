@@ -175,6 +175,12 @@ namespace SMBLibrary.Server.SMB1
                 return new ErrorResponse(CommandName.SMB_COM_TRANSACTION);
             }
 
+            if (subcommandResponse == null)
+            {
+                // A successful subcommand without a response body, such as WaitNamedPipe
+                return GetTransactionResponse(false, new byte[0], new byte[0], new byte[0], state.MaxBufferSize);
+            }
+
             byte[] responseSetup = subcommandResponse.GetSetup();
             byte[] responseParameters = subcommandResponse.GetParameters();
             byte[] responseData = subcommandResponse.GetData(header.UnicodeFlag);
