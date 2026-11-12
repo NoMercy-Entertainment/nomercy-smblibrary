@@ -42,15 +42,20 @@ namespace SMBLibrary.Services
             Level = parser.ReadUInt32();
             switch (Level)
             {
-                case 100:
+                case 0:
                     ShareInfo0Entry info0 = null;
                     parser.ReadEmbeddedStructureFullPointer<ShareInfo0Entry>(ref info0);
                     Info = info0;
                     break;
-                case 101:
+                case 1:
                     ShareInfo1Entry info1 = null;
                     parser.ReadEmbeddedStructureFullPointer<ShareInfo1Entry>(ref info1);
                     Info = info1;
+                    break;
+                case 2:
+                    ShareInfo2Entry info2 = null;
+                    parser.ReadEmbeddedStructureFullPointer<ShareInfo2Entry>(ref info2);
+                    Info = info2;
                     break;
                 default:
                     throw new InvalidLevelException(Level);
