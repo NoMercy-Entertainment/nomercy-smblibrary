@@ -64,7 +64,7 @@ namespace SMBLibrary
             long span = LittleEndianConverter.ToInt64(buffer, offset);
             if (span > 0)
             {
-                return DateTime.FromFileTimeUtc(span);
+                return span <= MaxFileTimeIntegerValue ? DateTime.FromFileTimeUtc(span) : DateTime.MaxValue;
             }
             else if (span == 0)
             {
