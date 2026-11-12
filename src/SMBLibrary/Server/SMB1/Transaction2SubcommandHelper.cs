@@ -36,6 +36,18 @@ namespace SMBLibrary.Server.SMB1
                 return null;
             }
 
+            if (share is FileSystemShare)
+            {
+                int separator = fileNamePattern.LastIndexOf('\\');
+                string directoryPath = separator > 0 ? fileNamePattern.Substring(0, separator) : @"\";
+                if (!((FileSystemShare)share).HasReadAccess(session.SecurityContext, directoryPath))
+                {
+                    state.LogToServer(Severity.Verbose, "FindFirst2 on '{0}{1}' failed. User '{2}' was denied access.", share.Name, directoryPath, session.UserName);
+                    header.Status = NTStatus.STATUS_ACCESS_DENIED;
+                    return null;
+                }
+            }
+
             NTStatus searchStatus = SMB1FileStoreHelper.QueryDirectory(out entries, share.FileStore, fileNamePattern, informationClass, session.SecurityContext);
             if (searchStatus != NTStatus.STATUS_SUCCESS)
             {
