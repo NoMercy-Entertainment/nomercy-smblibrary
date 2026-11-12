@@ -79,11 +79,26 @@ namespace Utilities
 
             byte[] mac = CalculateMac(key, nonce, data, associatedData, signature.Length);
             byte[] expectedSignature = ByteUtils.XOR(keyStream, 0, mac, 0, mac.Length);
-            if (!ByteUtils.AreByteArraysEqual(expectedSignature, signature))
+            if (!AreEqualInConstantTime(expectedSignature, signature))
             {
                 throw new CryptographicException("The computed authentication value did not match the input");
             }
             return data;
+        }
+
+        private static bool AreEqualInConstantTime(byte[] expected, byte[] actual)
+        {
+            if (expected.Length != actual.Length)
+            {
+                return false;
+            }
+
+            int difference = 0;
+            for (int index = 0; index < expected.Length; index++)
+            {
+                difference |= expected[index] ^ actual[index];
+            }
+            return difference == 0;
         }
 
         private static byte[] BuildKeyStream(byte[] key, byte[] nonce, int dataLength)
