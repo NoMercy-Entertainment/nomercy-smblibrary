@@ -70,6 +70,11 @@ namespace SMBLibrary
 
         public NTStatus ReadFile(out byte[] data, object handle, long offset, int maxCount)
         {
+            if (maxCount < 0 || maxCount > Server.SMB2.NegotiateHelper.ServerMaxReadSizeLargeMTU)
+            {
+                data = null;
+                return NTStatus.STATUS_INVALID_PARAMETER;
+            }
             Stream stream = ((FileHandle)handle).Stream;
             data = new byte[maxCount];
             int bytesRead = stream.Read(data, 0, maxCount);
