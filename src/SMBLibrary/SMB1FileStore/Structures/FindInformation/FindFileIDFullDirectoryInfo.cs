@@ -57,7 +57,7 @@ namespace SMBLibrary.SMB1
 
         public override void WriteBytes(byte[] buffer, ref int offset, bool isUnicode)
         {
-            uint fileNameLength = (byte)(isUnicode ? FileName.Length * 2 : FileName.Length);
+            uint fileNameLength = (uint)(isUnicode ? FileName.Length * 2 : FileName.Length);
 
             LittleEndianWriter.WriteUInt32(buffer, ref offset, NextEntryOffset);
             LittleEndianWriter.WriteUInt32(buffer, ref offset, FileIndex);
