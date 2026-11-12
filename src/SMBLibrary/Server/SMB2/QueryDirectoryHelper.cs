@@ -24,6 +24,12 @@ namespace SMBLibrary.Server.SMB2
                 return new ErrorResponse(request.CommandName, NTStatus.STATUS_FILE_CLOSED);
             }
 
+            if (!(share is FileSystemShare))
+            {
+                state.LogToServer(Severity.Verbose, "Query Directory on '{0}{1}' failed. The share is not a file system share.", share.Name, openFile.Path);
+                return new ErrorResponse(request.CommandName, NTStatus.STATUS_NOT_SUPPORTED);
+            }
+
             if (!((FileSystemShare)share).HasReadAccess(session.SecurityContext, openFile.Path))
             {
                 state.LogToServer(Severity.Verbose, "Query Directory on '{0}{1}' failed. User '{2}' was denied access.", share.Name, openFile.Path, session.UserName);
