@@ -77,7 +77,12 @@ namespace SMBLibrary
                 {
                     entry = new FileFullEAEntry(buffer, offset);
                     result.Add(entry);
-                    offset += (int)entry.NextEntryOffset;
+                    int nextEntryOffset = (int)entry.NextEntryOffset;
+                    if (nextEntryOffset < 0 || (nextEntryOffset != 0 && offset + nextEntryOffset >= buffer.Length))
+                    {
+                        throw new System.IO.InvalidDataException("Invalid NextEntryOffset");
+                    }
+                    offset += nextEntryOffset;
                 }
                 while (entry.NextEntryOffset != 0);
             }
