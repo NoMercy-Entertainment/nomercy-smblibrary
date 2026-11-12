@@ -124,10 +124,7 @@ namespace SMBLibrary.Client
             SMB2Command response = m_client.WaitForCommand(request.MessageID, out bool connectionTerminated);
             if (response != null)
             {
-                if (response.Header.Status == NTStatus.STATUS_SUCCESS && response is FlushResponse)
-                {
-                    return response.Header.Status;
-                }
+                return response.Header.Status;
             }
 
             return connectionTerminated ? NTStatus.STATUS_INVALID_SMB : NTStatus.STATUS_IO_TIMEOUT;
