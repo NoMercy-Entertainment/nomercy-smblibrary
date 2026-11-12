@@ -108,40 +108,44 @@ namespace SMBLibrary.Server
 
         private ulong? AllocateAsyncID()
         {
-            for (ulong offset = 0; offset < UInt64.MaxValue; offset++)
+            lock (m_pendingRequests)
             {
-                ulong asyncID = (ulong)(m_nextAsyncID + offset);
-                if (asyncID == 0 || asyncID == 0xFFFFFFFF)
+                for (ulong offset = 0; offset < UInt64.MaxValue; offset++)
                 {
-                    continue;
+                    ulong asyncID = (ulong)(m_nextAsyncID + offset);
+                    if (asyncID == 0 || asyncID == 0xFFFFFFFF)
+                    {
+                        continue;
+                    }
+                    if (!m_pendingRequests.ContainsKey(asyncID))
+                    {
+                        m_nextAsyncID = (ulong)(asyncID + 1);
+                        return asyncID;
+                    }
                 }
-                if (!m_pendingRequests.ContainsKey(asyncID))
-                {
-                    m_nextAsyncID = (ulong)(asyncID + 1);
-                    return asyncID;
-                }
+                return null;
             }
-            return null;
         }
 
         public SMB2AsyncContext CreateAsyncContext(FileID fileID, SMB2ConnectionState connection, ulong sessionID, uint treeID)
         {
-            ulong? asyncID = AllocateAsyncID();
-            if (asyncID == null)
-            {
-                return null;
-            }
-            SMB2AsyncContext context = new SMB2AsyncContext();
-            context.AsyncID = asyncID.Value;
-            context.FileID = fileID;
-            context.Connection = connection;
-            context.SessionID = sessionID;
-            context.TreeID = treeID;
+            // Allocation and insertion share one lock hold so two callers cannot get the same ID
             lock (m_pendingRequests)
             {
+                ulong? asyncID = AllocateAsyncID();
+                if (asyncID == null)
+                {
+                    return null;
+                }
+                SMB2AsyncContext context = new SMB2AsyncContext();
+                context.AsyncID = asyncID.Value;
+                context.FileID = fileID;
+                context.Connection = connection;
+                context.SessionID = sessionID;
+                context.TreeID = treeID;
                 m_pendingRequests.Add(asyncID.Value, context);
+                return context;
             }
-            return context;
         }
 
         public SMB2AsyncContext GetAsyncContext(ulong asyncID)

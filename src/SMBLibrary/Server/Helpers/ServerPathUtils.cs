@@ -40,7 +40,7 @@ namespace SMBLibrary.Server
             int index = relativePath.IndexOf('\\', 1);
             if (index > 0)
             {
-                return path.Substring(index);
+                return relativePath.Substring(index);
             }
             else
             {
