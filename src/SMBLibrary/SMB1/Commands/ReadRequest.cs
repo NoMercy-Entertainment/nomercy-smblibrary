@@ -32,7 +32,7 @@ namespace SMBLibrary.SMB1
             FID = LittleEndianConverter.ToUInt16(this.SMBParameters, 0);
             CountOfBytesToRead = LittleEndianConverter.ToUInt16(this.SMBParameters, 2);
             ReadOffsetInBytes = LittleEndianConverter.ToUInt32(this.SMBParameters, 4);
-            CountOfBytesToRead = LittleEndianConverter.ToUInt16(this.SMBParameters, 8);
+            EstimateOfRemainingBytesToBeRead = LittleEndianConverter.ToUInt16(this.SMBParameters, 8);
         }
 
         public override byte[] GetBytes(bool isUnicode)
@@ -41,7 +41,7 @@ namespace SMBLibrary.SMB1
             LittleEndianWriter.WriteUInt16(this.SMBParameters, 0, FID);
             LittleEndianWriter.WriteUInt16(this.SMBParameters, 2, CountOfBytesToRead);
             LittleEndianWriter.WriteUInt32(this.SMBParameters, 4, ReadOffsetInBytes);
-            LittleEndianWriter.WriteUInt16(this.SMBParameters, 8, CountOfBytesToRead);
+            LittleEndianWriter.WriteUInt16(this.SMBParameters, 8, EstimateOfRemainingBytesToBeRead);
             return base.GetBytes(isUnicode);
         }
 
