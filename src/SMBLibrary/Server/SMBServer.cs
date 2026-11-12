@@ -99,12 +99,21 @@ namespace SMBLibrary.Server
                 m_enableSMB1 = enableSMB1;
                 m_enableSMB2 = enableSMB2;
                 m_enableSMB3 = enableSMB3;
-                m_listening = true;
                 m_serverStartTime = DateTime.Now;
 
                 m_listenerSocket = new Socket(m_serverAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                m_listenerSocket.Bind(new IPEndPoint(m_serverAddress, port));
-                m_listenerSocket.Listen((int)SocketOptionName.MaxConnections);
+                try
+                {
+                    m_listenerSocket.Bind(new IPEndPoint(m_serverAddress, port));
+                    m_listenerSocket.Listen((int)SocketOptionName.MaxConnections);
+                }
+                catch
+                {
+                    m_listenerSocket.Close();
+                    m_listenerSocket = null;
+                    throw;
+                }
+                m_listening = true;
                 m_listenerSocket.BeginAccept(ConnectRequestCallback, m_listenerSocket);
 
                 if (connectionInactivityTimeout.HasValue)
@@ -222,7 +231,14 @@ namespace SMBLibrary.Server
                 clientSocket.Close();
             }
 
-            listenerSocket.BeginAccept(ConnectRequestCallback, listenerSocket);
+            try
+            {
+                listenerSocket.BeginAccept(ConnectRequestCallback, listenerSocket);
+            }
+            catch (ObjectDisposedException)
+            {
+                // Stop released the listener while this callback was running
+            }
         }
 
         private void ReceiveCallback(IAsyncResult result)
