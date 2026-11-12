@@ -58,7 +58,8 @@ namespace SMBLibrary.Server.SMB1
             ProcessStateObject processState = state.GetProcessState(header.PID);
             if (processState == null)
             {
-                throw new InvalidDataException();
+                header.Status = NTStatus.STATUS_INVALID_SMB;
+                return new ErrorResponse(CommandName.SMB_COM_NT_TRANSACT);
             }
             if ((ulong)request.ParameterDisplacement + (ulong)request.TransParameters.Length > (ulong)processState.TransactionParameters.Length ||
                 (ulong)request.DataDisplacement + (ulong)request.TransData.Length > (ulong)processState.TransactionData.Length)
