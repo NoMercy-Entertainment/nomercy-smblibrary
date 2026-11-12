@@ -23,6 +23,12 @@ namespace SMBLibrary.Server.SMB1
                 request.TransData.Length < request.TotalDataCount)
             {
                 // A secondary transaction request is pending
+                if (request.TransParameters.Length > request.TotalParameterCount ||
+                    request.TransData.Length > request.TotalDataCount)
+                {
+                    header.Status = NTStatus.STATUS_INVALID_PARAMETER;
+                    return new ErrorResponse(CommandName.SMB_COM_NT_TRANSACT);
+                }
                 ProcessStateObject processState = state.CreateProcessState(header.PID);
                 processState.SubcommandID = (ushort)request.Function;
                 processState.MaxParameterCount = request.MaxParameterCount;
@@ -53,6 +59,13 @@ namespace SMBLibrary.Server.SMB1
             if (processState == null)
             {
                 throw new InvalidDataException();
+            }
+            if ((ulong)request.ParameterDisplacement + (ulong)request.TransParameters.Length > (ulong)processState.TransactionParameters.Length ||
+                (ulong)request.DataDisplacement + (ulong)request.TransData.Length > (ulong)processState.TransactionData.Length)
+            {
+                state.RemoveProcessState(header.PID);
+                header.Status = NTStatus.STATUS_INVALID_PARAMETER;
+                return new ErrorResponse(CommandName.SMB_COM_NT_TRANSACT);
             }
             ByteWriter.WriteBytes(processState.TransactionParameters, (int)request.ParameterDisplacement, request.TransParameters);
             ByteWriter.WriteBytes(processState.TransactionData, (int)request.DataDisplacement, request.TransData);

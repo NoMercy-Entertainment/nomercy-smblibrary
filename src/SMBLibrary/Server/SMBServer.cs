@@ -370,7 +370,16 @@ namespace SMBLibrary.Server
 
                     if (m_enableSMB1)
                     {
-                        ProcessSMB1Message(message, ref state);
+                        try
+                        {
+                            ProcessSMB1Message(message, ref state);
+                        }
+                        catch (Exception ex)
+                        {
+                            state.LogToServer(Severity.Warning, "SMB1 message processing failed: " + ex.Message);
+                            state.ClientSocket.Close();
+                            state.ReceiveBuffer.Dispose();
+                        }
                     }
                     else
                     {
