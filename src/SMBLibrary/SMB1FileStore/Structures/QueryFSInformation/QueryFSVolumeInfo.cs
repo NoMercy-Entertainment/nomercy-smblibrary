@@ -35,7 +35,7 @@ namespace SMBLibrary.SMB1
             SerialNumber = LittleEndianConverter.ToUInt32(buffer, offset + 8);
             VolumeLabelSize = LittleEndianConverter.ToUInt32(buffer, offset + 12);
             Reserved = LittleEndianConverter.ToUInt16(buffer, offset + 16);
-            VolumeLabel = ByteReader.ReadUTF16String(buffer, offset + 18, (int)VolumeLabelSize);
+            VolumeLabel = ByteReader.ReadUTF16String(buffer, offset + 18, (int)VolumeLabelSize / 2);
         }
 
         public override byte[] GetBytes(bool isUnicode)
