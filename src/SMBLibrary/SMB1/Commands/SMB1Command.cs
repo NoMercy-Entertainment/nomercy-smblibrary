@@ -447,7 +447,7 @@ namespace SMBLibrary.SMB1
                     }
                 case CommandName.SMB_COM_QUERY_INFORMATION_DISK:
                     {
-                        if (wordCount * 2 == QueryInformationResponse.ParameterLength)
+                        if (wordCount * 2 == QueryInformationDiskResponse.ParameterLength)
                         {
                             return new QueryInformationDiskResponse(buffer, offset);
                         }
