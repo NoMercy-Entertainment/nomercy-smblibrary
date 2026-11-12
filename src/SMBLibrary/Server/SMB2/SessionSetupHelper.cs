@@ -23,7 +23,16 @@ namespace SMBLibrary.Server.SMB2
             // [MS-SMB2] Windows [..] will also accept raw Kerberos messages and implicit NTLM messages as part of GSS authentication.
             SessionSetupResponse response = new SessionSetupResponse();
             byte[] outputToken;
-            NTStatus status = securityProvider.AcceptSecurityContext(ref state.AuthenticationContext, request.SecurityBuffer, out outputToken);
+            NTStatus status;
+            try
+            {
+                status = securityProvider.AcceptSecurityContext(ref state.AuthenticationContext, request.SecurityBuffer, out outputToken);
+            }
+            catch (Exception ex)
+            {
+                state.LogToServer(Severity.Warning, "Session Setup: invalid security token: " + ex.Message);
+                return new ErrorResponse(request.CommandName, NTStatus.SEC_E_INVALID_TOKEN);
+            }
             if (status != NTStatus.STATUS_SUCCESS && status != NTStatus.SEC_I_CONTINUE_NEEDED)
             {
                 string userName = securityProvider.GetContextAttribute(state.AuthenticationContext, GSSAttributeName.UserName) as string;

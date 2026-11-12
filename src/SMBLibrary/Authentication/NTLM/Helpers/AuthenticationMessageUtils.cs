@@ -50,7 +50,8 @@ namespace SMBLibrary.Authentication.NTLM
 
         public static bool IsSignatureValid(byte[] messageBytes)
         {
-            if (messageBytes.Length < 8)
+            // The signature and the 4-byte message type that follows it must both be present
+            if (messageBytes == null || messageBytes.Length < 12)
             {
                 return false;
             }

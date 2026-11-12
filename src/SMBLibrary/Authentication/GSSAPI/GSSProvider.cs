@@ -68,7 +68,7 @@ namespace SMBLibrary.Authentication.GSSAPI
                 if (spnegoToken is SimpleProtectedNegotiationTokenInit)
                 {
                     SimpleProtectedNegotiationTokenInit tokenInit = (SimpleProtectedNegotiationTokenInit)spnegoToken;
-                    if (tokenInit.MechanismTypeList.Count == 0)
+                    if (tokenInit.MechanismTypeList == null || tokenInit.MechanismTypeList.Count == 0)
                     {
                         return NTStatus.SEC_E_INVALID_TOKEN;
                     }
@@ -110,6 +110,10 @@ namespace SMBLibrary.Authentication.GSSAPI
                     }
                     IGSSMechanism mechanism = context.Mechanism;
                     SimpleProtectedNegotiationTokenResponse tokenResponse = (SimpleProtectedNegotiationTokenResponse)spnegoToken;
+                    if (tokenResponse.ResponseToken == null)
+                    {
+                        return NTStatus.SEC_E_INVALID_TOKEN;
+                    }
                     byte[] mechanismOutput;
                     NTStatus status = mechanism.AcceptSecurityContext(ref context.MechanismContext, tokenResponse.ResponseToken, out mechanismOutput);
                     outputToken = GetSPNEGOTokenResponseBytes(mechanismOutput, status, null);
