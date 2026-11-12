@@ -506,9 +506,20 @@ namespace SMBLibrary.Client
                 byte[] messageBytes;
                 if (m_dialect >= SMB2Dialect.SMB300 && SMB2TransformHeader.IsTransformHeader(packet.Trailer, 0))
                 {
-                    SMB2TransformHeader transformHeader = new SMB2TransformHeader(packet.Trailer, 0);
-                    byte[] encryptedMessage = ByteReader.ReadBytes(packet.Trailer, SMB2TransformHeader.Length, (int)transformHeader.OriginalMessageSize);
-                    messageBytes = SMB2Cryptography.DecryptMessage(m_decryptionKey, transformHeader, encryptedMessage);
+                    try
+                    {
+                        SMB2TransformHeader transformHeader = new SMB2TransformHeader(packet.Trailer, 0);
+                        byte[] encryptedMessage = ByteReader.ReadBytes(packet.Trailer, SMB2TransformHeader.Length, (int)transformHeader.OriginalMessageSize);
+                        messageBytes = SMB2Cryptography.DecryptMessage(m_decryptionKey, transformHeader, encryptedMessage);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log("Invalid encrypted SMB2 response: " + ex.Message);
+                        state.ClientSocket.Close();
+                        m_isConnected = false;
+                        state.ReceiveBuffer.Dispose();
+                        return;
+                    }
                 }
                 else
                 {
