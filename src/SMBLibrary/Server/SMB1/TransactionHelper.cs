@@ -26,6 +26,12 @@ namespace SMBLibrary.Server.SMB1
                 request.TransData.Length < request.TotalDataCount)
             {
                 // A secondary transaction request is pending
+                if (request.TransParameters.Length > request.TotalParameterCount ||
+                    request.TransData.Length > request.TotalDataCount)
+                {
+                    header.Status = NTStatus.STATUS_INVALID_PARAMETER;
+                    return new ErrorResponse(request is Transaction2Request ? CommandName.SMB_COM_TRANSACTION2 : CommandName.SMB_COM_TRANSACTION);
+                }
                 ProcessStateObject processState = state.CreateProcessState(header.PID);
                 processState.MaxParameterCount = request.MaxParameterCount;
                 processState.MaxDataCount = request.MaxDataCount;
