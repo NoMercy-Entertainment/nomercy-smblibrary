@@ -149,7 +149,7 @@ namespace SMBLibrary.Server.SMB2
                     return new ErrorResponse(request.CommandName, NTStatus.STATUS_INVALID_PARAMETER);
                 }
 
-                NTStatus status = share.FileStore.SetSecurityInformation(openFile, request.SecurityInformation, securityDescriptor);
+                NTStatus status = share.FileStore.SetSecurityInformation(openFile.Handle,request.SecurityInformation, securityDescriptor);
                 if (status != NTStatus.STATUS_SUCCESS)
                 {
                     state.LogToServer(Severity.Verbose, "SetSecurityInformation on '{0}{1}' failed. Security information: 0x{2}, NTStatus: {3}. (FileId: {4})", share.Name, openFile.Path, request.SecurityInformation.ToString("X"), status, request.FileId.Volatile);

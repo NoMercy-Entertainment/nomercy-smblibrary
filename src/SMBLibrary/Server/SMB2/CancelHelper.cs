@@ -22,6 +22,12 @@ namespace SMBLibrary.Server.SMB2
                 if (context != null)
                 {
                     ISMBShare share = session.GetConnectedTree(context.TreeID);
+                    if (share == null)
+                    {
+                        // The tree was disconnected, so there is nothing left to cancel.
+                        state.RemoveAsyncContext(context);
+                        return null;
+                    }
                     OpenFileObject openFile = session.GetOpenFileObject(context.FileID);
                     NTStatus status = share.FileStore.Cancel(context.IORequest);
                     if (openFile != null)

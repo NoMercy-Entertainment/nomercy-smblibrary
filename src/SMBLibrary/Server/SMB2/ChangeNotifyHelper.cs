@@ -20,6 +20,11 @@ namespace SMBLibrary.Server.SMB2
         {
             SMB2Session session = state.GetSession(request.Header.SessionID);
             OpenFileObject openFile = session.GetOpenFileObject(request.FileId);
+            if (openFile == null)
+            {
+                state.LogToServer(Severity.Verbose, "NotifyChange failed. Invalid FileId. (SessionID: {0}, TreeID: {1}, FileId: {2})", request.Header.SessionID, request.Header.TreeID, request.FileId.Volatile);
+                return new ErrorResponse(request.CommandName, NTStatus.STATUS_FILE_CLOSED);
+            }
             bool watchTree = (request.Flags & ChangeNotifyFlags.WatchTree) > 0;
             SMB2AsyncContext asyncContext = state.CreateAsyncContext(request.FileId, state, request.Header.SessionID, request.Header.TreeID);
             // We have to make sure that we don't send an interim response after the final response.

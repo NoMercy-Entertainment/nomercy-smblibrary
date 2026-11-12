@@ -154,6 +154,22 @@ namespace SMBLibrary.Server
             return context;
         }
 
+        public List<SMB2AsyncContext> GetAsyncContexts(ulong sessionID, uint treeID)
+        {
+            List<SMB2AsyncContext> result = new List<SMB2AsyncContext>();
+            lock (m_pendingRequests)
+            {
+                foreach (SMB2AsyncContext context in m_pendingRequests.Values)
+                {
+                    if (context.SessionID == sessionID && context.TreeID == treeID)
+                    {
+                        result.Add(context);
+                    }
+                }
+            }
+            return result;
+        }
+
         public void RemoveAsyncContext(SMB2AsyncContext context)
         {
             lock (m_pendingRequests)

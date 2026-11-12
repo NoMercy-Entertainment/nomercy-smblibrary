@@ -88,6 +88,14 @@ namespace SMBLibrary.Server
             m_connectedTrees.TryGetValue(treeID, out share);
             if (share != null)
             {
+                foreach (SMB2AsyncContext context in m_connection.GetAsyncContexts(m_sessionID, treeID))
+                {
+                    if (context.IORequest != null)
+                    {
+                        share.FileStore.Cancel(context.IORequest);
+                    }
+                    m_connection.RemoveAsyncContext(context);
+                }
                 lock (m_openFiles)
                 {
                     List<ulong> fileIDList = new List<ulong>(m_openFiles.Keys);
