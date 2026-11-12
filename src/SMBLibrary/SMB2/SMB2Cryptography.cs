@@ -148,7 +148,10 @@ namespace SMBLibrary.SMB2
         private static byte[] GenerateAesCcmNonce()
         {
             byte[] aesCcmNonce = new byte[AesCcmNonceLength];
-            new Random().NextBytes(aesCcmNonce);
+            using (RandomNumberGenerator generator = RandomNumberGenerator.Create())
+            {
+                generator.GetBytes(aesCcmNonce);
+            }
             return aesCcmNonce;
         }
 
